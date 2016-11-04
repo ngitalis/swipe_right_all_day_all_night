@@ -1,0 +1,8 @@
+{
+  "name": "swipe_right_allday_allnight",
+  "version": "0.0.1",
+  "description": "",
+  "dependencies": {
+    "express": "x.x.x"
+  }
+}
