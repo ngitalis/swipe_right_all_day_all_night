@@ -1,5 +1,5 @@
 var config = {
-    id: 1234,
+    id: xxx,
     token: "xxx"
 }
 
