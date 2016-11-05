@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "",
   "dependencies": {
-    "express": "x.x.x",
-    "body-parser": "x.x.x"
+    "tinder": "x.x.x"
   }
 }

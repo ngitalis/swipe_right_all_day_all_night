@@ -1,6 +1,6 @@
 var config = {
-    server_port: 3000,
-    fb_token: 0
+    id: 1234,
+    token: "xxx"
 }
 
 if ( typeof exports !== 'undefined' )
