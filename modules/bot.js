@@ -70,26 +70,26 @@ var Bot = function ( ) {
     this.step = function ( ) {
         switch (this.state) {
             case STATES.LOGIN:
-                this.changeState(STATES.IDLE);
                 this.login(function ( ) {
-                    this.cycles = 10 * calc_delta_interval(10, .8);
+                    this.cycles = calc_delta_interval(10, .5);
                     this.changeState(STATES.SWIPE);
                     this.step( );
                 }.bind(this));
                 break;
 
-            case STATES.SWIPE:
-                this.changeState(STATES.IDLE);
-                
-                if ( this.cycles > 0 )
+            case STATES.SWIPE:                
+                if ( this.cycles > 0 ) {
                     this.swipe(function ( ) {
                         this.step( );
                     }.bind(this));
-                else
+                }
+                else {
+                    log("Nap Time")
                     human_sleep(1200, function ( ) {
                         this.changeState(STATES.LOGIN);
                         this.step( );
-                    });
+                    }.bind(this));
+                }
                 break;
         }
     }
@@ -104,10 +104,9 @@ var Bot = function ( ) {
                 log(res)
                 process.exit(1)
             }
-            else {
-                log("YAAA!");
-                log("");
-            }
+
+            log("YAAA!");
+            log("");
 
             human_sleep(10, function ( ) {
                 callback( )
@@ -116,8 +115,10 @@ var Bot = function ( ) {
     }
 
     this.swipe = function (callback) {
+        log("")
         log("SWIPESSSSIIEEEEESSSZZZ!!!")
         log(this.cycles + " Cycles to go~");
+        log("")
 
         var defaults = this.client.getDefaults();
         var recs_size = defaults.globals.recs_size;
@@ -136,22 +137,36 @@ var Bot = function ( ) {
                 var thing = data.results[i];
 
                 likes.push(
-                    (function (dudegal) {
+                    (function (dudegal, client) {
                         return function (dun) {
                             // swipe
-                            log(dudegal.name);
+                            log("I LIKE: " + dudegal.name);
                             log("");
-                            dun( )
+                            client.like(dudegal._id, function(err, res) {
+                                if (err) {
+                                    log("PANIC");
+                                    log(err);
+                                    log(res);
+                                    process.exit(1);
+                                }
+
+                                if ( !res.likes_remaining ) {
+                                    log("Outta likes! \n PEACE~");
+                                    process.exit(1);
+                                }
+
+                                dun( ); 
+                            });
                         }
-                    })(thing)
+                    })(thing, this.client)
                 );
             }
 
             runFunctions(likes, 3, function ( ) {
                 this.cycles--;
                 callback( );
-            });
-        });
+            }.bind(this));
+        }.bind(this));
     }
 
     this.changeState = function (state) {
